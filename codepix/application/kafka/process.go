@@ -45,6 +45,7 @@ func (k *KafkaPreocessor) Consume() {
 	for {
 		msg, err := c.ReadMessage(-1)
 		if err == nil {
+			fmt.Println("[kafka] read message:", string(msg.Value))
 			k.processMessage(msg)
 		}
 	}
@@ -68,6 +69,7 @@ func (k *KafkaPreocessor) processTransaction(msg *ckafka.Message) error {
 	transaction := appmodel.NewTransaction()
 	err := transaction.ParseJson(msg.Value)
 	if err != nil {
+		fmt.Println("[kafka] not a valid transaction", err)
 		return err
 	}
 
@@ -79,6 +81,7 @@ func (k *KafkaPreocessor) processTransaction(msg *ckafka.Message) error {
 		transaction.PixKeyTo,
 		transaction.PixKeyKindTo,
 		transaction.Description,
+		transaction.ID,
 	)
 	if err != nil {
 		fmt.Println("error registering transaction", err)
@@ -106,6 +109,7 @@ func (k *KafkaPreocessor) processTransactionConfirmation(msg *ckafka.Message) er
 	transaction := appmodel.NewTransaction()
 	err := transaction.ParseJson(msg.Value)
 	if err != nil {
+		fmt.Println("[kafka] not a valid transaction", err)
 		return err
 	}
 
