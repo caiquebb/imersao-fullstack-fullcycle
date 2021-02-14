@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-api-002
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bank-api-002
+  template:
+    metadata:
+      labels:
+        app: bank-api-002
+    spec:
+      containers:
+        - name: bank-api-002
+          image: caiquebb/bank-api-nest
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: bank-api-002-secret
+          
+          volumeMounts:
+            - name: bank-api-002-volume
+              mountPath: /home/node/app/.env
+              subPath: .env
+
+      volumes:
+        - name: bank-api-002-volume
+          configMap:
+            name: bank-api-002-conf
+            items:
+              - key: env
+                path: .env

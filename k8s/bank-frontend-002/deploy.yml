@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-frontend-002
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bank-frontend-002
+  template:
+    metadata:
+      labels:
+        app: bank-frontend-002
+    spec:
+      containers:
+        - name: bank-frontend-002
+          image: caiquebb/bank-frontend-next
+          ports:
+            - containerPort: 3000
+          
+          volumeMounts:
+            - name: bank-frontend-002-volume
+              mountPath: /app/.env
+              subPath: .env
+
+      volumes:
+        - name: bank-frontend-002-volume
+          configMap:
+            name: bank-frontend-002-conf
+            items:
+              - key: env
+                path: .env
